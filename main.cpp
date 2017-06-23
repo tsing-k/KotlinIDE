@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
     MainWindow w;
-    w.show();
+    w.showMaximized();
 
     return a.exec();
 }

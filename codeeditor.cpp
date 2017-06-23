@@ -10,6 +10,13 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 
     updateLineNumberAreaWidth(0);
+
+    QFont mFont = font();
+    mFont.setFamily("Courier");
+    mFont.setPointSize(10);
+    setFont(mFont);
+
+    setStyleSheet("background-color: #FFFFFF;");
 }
 int CodeEditor::lineNumberAreaWidth()
 {
@@ -20,7 +27,7 @@ int CodeEditor::lineNumberAreaWidth()
         ++digits;
     }
 
-    int space = 16 + fontMetrics().width(QLatin1Char('9')) * digits;
+    int space = 16 + fontMetrics().width(QLatin1Char('9')) * digits + 16;
 
     return space;
 }
@@ -48,6 +55,33 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
     QRect cr = contentsRect();
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
+
+void CodeEditor::wheelEvent(QWheelEvent *event)
+{
+    if(event->modifiers() == Qt::ControlModifier)
+    {
+        if(event->delta() > 0)
+        {
+            zoomIn(2);
+        }
+        else
+        {
+            zoomOut(2);
+        }
+    }
+}
+
+void CodeEditor::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Tab)
+    {
+        insertPlainText("    ");//ËÄ¸ö¿Õ¸ñ
+    }
+    else
+    {
+        QPlainTextEdit::keyPressEvent(event);
+    }
+}
 void CodeEditor::highlightCurrentLine()
 {
     QList<QTextEdit::ExtraSelection> extraSelections;
@@ -55,10 +89,12 @@ void CodeEditor::highlightCurrentLine()
     if (!isReadOnly()) {
         QTextEdit::ExtraSelection selection;
 
-        QColor lineColor = QColor(Qt::yellow).lighter(160);
+        QColor lineColor = QColor("#E0F0FF");
 
         selection.format.setBackground(lineColor);
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+        selection.cursor = textCursor();
+        selection.cursor.clearSelection();
         extraSelections.append(selection);
     }
 
@@ -68,7 +104,7 @@ void CodeEditor::highlightCurrentLine()
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(lineNumberArea);
-    painter.fillRect(event->rect(), Qt::lightGray);
+    painter.fillRect(event->rect(), QColor("#F0F0F0"));
 
 
     QTextBlock block = firstVisibleBlock();
@@ -79,8 +115,8 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);
-            painter.setPen(Qt::black);
-            painter.drawText(-2, top, lineNumberArea->width(), fontMetrics().height(),
+            painter.setPen(QColor("#A0A0A0"));
+            painter.drawText(-2, top, lineNumberArea->width() - 16, fontMetrics().height(),
                              Qt::AlignRight, number);
         }
 
