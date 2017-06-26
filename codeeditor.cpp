@@ -1,8 +1,9 @@
 #include "codeeditor.h"
+#include "highlighter.h"
 #include <QtWidgets>
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
-{
+{   
     lineNumberArea = new LineNumberArea(this);
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
@@ -17,6 +18,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     setFont(mFont);
 
     setStyleSheet("background-color: #FFFFFF;");
+    new Highlighter(document());
 }
 int CodeEditor::lineNumberAreaWidth()
 {
@@ -76,6 +78,10 @@ void CodeEditor::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_Tab)
     {
         insertPlainText("    ");//ËÄ¸ö¿Õ¸ñ
+    }
+    else if(event->modifiers() == Qt::CTRL && event->key() == Qt::Key_S)
+    {
+        emit requestSave();
     }
     else
     {

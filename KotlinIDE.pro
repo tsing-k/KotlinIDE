@@ -14,9 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-        codeeditor.cpp
+        codeeditor.cpp \
+    highlighter.cpp
 
 HEADERS  += mainwindow.h \
-        codeeditor.h
+        codeeditor.h \
+    highlighter.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    resource.qrc

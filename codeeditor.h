@@ -26,6 +26,9 @@ protected:
 
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
+signals:
+    void requestSave();
+
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
     void highlightCurrentLine();
